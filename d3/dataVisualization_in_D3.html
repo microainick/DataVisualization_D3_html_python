@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+
+<head>
+  <script src="https://d3js.org/d3.v5.js"></script>
+</head>
+
+<body>
+
+  <script type="text/javascript">
+    var w = 600;
+    var h = 200;
+    var padding =1;
+
+    var svg = d3.select("body")
+      .append("svg")
+      .attr("width", w)
+      .attr("height", h);
+
+    var bardata = [];
+    for (var i=0; i<25; i++){
+      var newNumber = Math.floor(Math.random()*100);
+      bardata.push(newNumber);
+    }
+
+    var yScale = d3.scaleLinear()
+                   .domain([0,100])
+                   .range([h,0]);
+
+    var colorScale = d3.scaleLinear()
+                       .domain([0,100])
+                       .range(["black","blue"]);
+
+    var xScale = d3.scaleBand()
+                   .domain(d3.range(bardata.length))
+                   .range([0,w])
+                   .padding(0.05);
+
+    svg.selectAll("rect")
+      .data(bardata)
+      .enter()
+      .append("rect")
+      .attr("y",function(d){
+        return yScale(d);
+      })
+      .attr("x",function(d,i){
+        return xScale(i);
+      })
+      .attr("width", xScale.bandwidth())
+      .attr("height", function(d){
+        return h - yScale(d);
+      })
+      .attr("fill", function(d){
+        return colorScale(d);
+      })
+      .on("click", function(){
+        alert("hey, don't click that!")
+      })
+      .on("mouseover", function(){
+        d3.select(this)
+          .attr("fill", "orange");
+      })
+      .on("mouseout", function(){
+        d3.select(this)
+          .attr("fill", function(d){
+        return colorScale(d);
+          });
+      })
+      .on("click", function(){
+        bardata = [];
+        for (var i=0; i<25; i++){
+          var newNumber = Math.floor(Math.random()*100);
+          bardata.push(newNumber);
+        }
+
+        svg.selectAll("rect")
+          .data(bardata)
+          .transition()
+          .duration(500)
+          .delay(function(d,i){
+            return i*20;
+          })
+          .attr("height", function(d){
+            return h - yScale(d);
+          })
+          .attr("fill", function(d){
+            return colorScale(d);
+          })
+          .attr("y", function(d){
+            return yScale(d);
+          });
+      });
+
+  </script>
+
+
+</body>
